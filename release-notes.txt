@@ -1,1 +1,1 @@
-Test release to check that updating works. No other changes.
+Signed updates, instant update check, macOS-style window with snapping and a hover snap menu on the green dot.
