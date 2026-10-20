@@ -1,0 +1,9 @@
+# Built binaries are published as GitHub Releases, not committed
+*.exe
+*.exe.bak
+*.bak
+# The signing key must never be committed
+*.xml
+pcoptimizer-signing-key*
+*.pfx
+*.snk

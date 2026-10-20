@@ -1,0 +1,6 @@
+# The script is hashed and signed byte for byte: git must never rewrite its line endings.
+*.ps1 -text
+*.json -text
+*.txt -text
+# cmd.exe mis-parses labels and goto in LF-only batch files
+*.bat text eol=crlf

@@ -1,0 +1,7 @@
+{
+    "version":  "2.2",
+    "sha256":  "037DE52E6EFECA96D0DD02E2EF8B20574C318270087A080AAA3C44DEFC3D0F37",
+    "exeSha256":  "BE22B789F1633045AC6CD98DD7AF49D7247956DA8D92EE60A294FD1DB6E251E9",
+    "notes":  "Signed updates, locked data folder, busy guard so buttons cannot overlap, safer restores, sharper exe on scaled displays, Windows title bar.",
+    "sig":  "KFND+vUOqUsQ6LGKDOxBNWlmClr275ingM8m1TxkYvrMv4OXE0ScgXXD0o3qPYqxwM9LcjBHpveZ2SypgjQ1PmQC6tAZJ52O03+ju+/9FZOc/zqVSQnQHX6/H0+3oUDUIkuQ+OUWa76MRfylp6gQpXUc12bucgxXce/yAc29bLNT95ymVT0IF1nzMpCZKiXp3Nj+Xw1RcdhBnbIOQJYzBuzu2KoWgyWLHtlyNxKcFn1OJiyY1Y1oUr721ojzttjODvM8AgTp0+6D3EHdYkpB56PranvAwuUXVx4uhwkEM/Dn6MpMLRU+IpbwtXlHi6jYaSCmipalCE76wQA1BUtPlM3PP9TS3yXL8dyecsHVr9Rmg+RyYKpXNIi3JNcZp3S17772QauuMJUufbqUrP0VbF7j0r0hdSJzqj/VE7ctGsZmLxdou7BnoWE3d0gmGGMM2BrV6jlQZjnOYAQVLDa+Fr4/PYbTuMbqgrNLKxKJfk5yTbdt0dK9+8lRVgas861K"
+}

@@ -1,0 +1,1 @@
+Signed updates, locked data folder, busy guard so buttons cannot overlap, safer restores, sharper exe on scaled displays, Windows title bar.
