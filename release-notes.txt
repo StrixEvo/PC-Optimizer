@@ -1,1 +1,1 @@
-Brings back the macOS look: traffic-light buttons and glass window. Everything else from 2.2 stays.
+Window now snaps to screen edges and corners like a normal Windows window (drag to an edge, or Win+arrow keys).

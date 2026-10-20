@@ -106,6 +106,13 @@ public static class CaptionHook {
   [StructLayout(LayoutKind.Sequential)] struct RECT { public int L; public int T; public int R; public int B; }
   [DllImport("user32.dll")] static extern bool ScreenToClient(IntPtr h, ref POINT p);
   [DllImport("user32.dll")] static extern bool GetClientRect(IntPtr h, out RECT r);
+  [DllImport("user32.dll", EntryPoint = "GetWindowLongPtrW")] static extern IntPtr GetStyle(IntPtr h, int i);
+  [DllImport("user32.dll", EntryPoint = "SetWindowLongPtrW")] static extern IntPtr SetStyle(IntPtr h, int i, IntPtr v);
+  // Borderless windows need the min/max/resize style bits for Windows to snap them to screen edges and quadrants.
+  public static void EnableSnap(IntPtr h) {
+    long st = GetStyle(h, -16).ToInt64();
+    SetStyle(h, -16, new IntPtr(st | 0x00010000L | 0x00020000L | 0x00040000L));
+  }
   static double sc = 1.0;
   static HwndSourceHook hook;
   static IntPtr Proc(IntPtr hwnd, int msg, IntPtr wp, IntPtr lp, ref bool handled) {
@@ -1741,7 +1748,7 @@ function Set-AdvancedMode([bool]$on) {
 # ============================================================
 #  Activity log
 # ============================================================
-$script:AppVersion = '2.3'
+$script:AppVersion = '2.4'
 $script:ActFile = Join-Path $script:DataDir 'activity.log'
 $script:LogBox = $null
 $script:SelfHash = $null
@@ -2876,7 +2883,7 @@ foreach ($t in $tabDefs) {
 $mainXaml = @'
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="PC Optimizer" Width="1080" Height="740" MinWidth="880" MinHeight="480"
+        Title="PC Optimizer" Width="1080" Height="740" MinWidth="640" MinHeight="480"
         WindowStyle="None" ResizeMode="CanResize" Background="Transparent"
         WindowStartupLocation="CenterScreen" FontFamily="Segoe UI Variable Text, Segoe UI" FontSize="13"
         UseLayoutRounding="True" SnapsToDevicePixels="True">
@@ -3126,6 +3133,7 @@ try {
         try {
             $sc = [System.Windows.Interop.HwndSource]::FromHwnd($script:Hwnd).CompositionTarget.TransformToDevice.M11
             [CaptionHook]::Install($script:Hwnd, [double]$sc)
+            [CaptionHook]::EnableSnap($script:Hwnd)
         } catch { Write-Log ('Caption hook: ' + $_) }
         Set-Theme $false
     })
