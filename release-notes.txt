@@ -1,1 +1,1 @@
-Signed updates, locked data folder, busy guard so buttons cannot overlap, safer restores, sharper exe on scaled displays, Windows title bar.
+Brings back the macOS look: traffic-light buttons and glass window. Everything else from 2.2 stays.

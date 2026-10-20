@@ -94,6 +94,45 @@ public static class Glass {
 '@
 }
 
+# ---- Window drag at the Windows level (works even if WPF mouse events do not) ----
+try {
+    if (-not ('CaptionHook' -as [type])) {
+        Add-Type -ReferencedAssemblies 'PresentationCore', 'WindowsBase' -TypeDefinition @'
+using System;
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
+public static class CaptionHook {
+  [StructLayout(LayoutKind.Sequential)] struct POINT { public int X; public int Y; }
+  [StructLayout(LayoutKind.Sequential)] struct RECT { public int L; public int T; public int R; public int B; }
+  [DllImport("user32.dll")] static extern bool ScreenToClient(IntPtr h, ref POINT p);
+  [DllImport("user32.dll")] static extern bool GetClientRect(IntPtr h, out RECT r);
+  static double sc = 1.0;
+  static HwndSourceHook hook;
+  static IntPtr Proc(IntPtr hwnd, int msg, IntPtr wp, IntPtr lp, ref bool handled) {
+    if (msg == 0x84) {
+      long l = lp.ToInt64();
+      POINT p; p.X = (short)(l & 0xFFFF); p.Y = (short)((l >> 16) & 0xFFFF);
+      ScreenToClient(hwnd, ref p);
+      RECT r; GetClientRect(hwnd, out r);
+      double x = p.X / sc, y = p.Y / sc, w = (r.R - r.L) / sc;
+      if (x < 6 || x > w - 6 || y < 6) return IntPtr.Zero;
+      bool side = (x < 220 && y < 56 && !(x < 90 && y > 14 && y < 42));
+      bool main = (x >= 220 && y < 70 && x < w - 260);
+      if (side || main) { handled = true; return (IntPtr)2; }
+    }
+    return IntPtr.Zero;
+  }
+  public static void Install(IntPtr h, double scale) {
+    sc = scale > 0 ? scale : 1.0;
+    HwndSource src = HwndSource.FromHwnd(h);
+    hook = new HwndSourceHook(Proc);
+    src.AddHook(hook);
+  }
+}
+'@
+    }
+} catch { }
+
 Say 'Glass helper ready'
 # ---- Paths ----
 $script:DataDir = Join-Path $env:ProgramData 'PCOptimizer'
@@ -1681,6 +1720,14 @@ function Restore-UiSettings {
     finally { $script:RestoringUi = $false }
 }
 
+function Do-WinDrag { try { (Get-El 'Tint') | Out-Null; $script:Win.DragMove() } catch { Write-Log ('Drag: ' + $_) } }
+function Do-WinClose { $script:Win.Close() }
+function Do-WinMin { $script:Win.WindowState = [System.Windows.WindowState]::Minimized }
+function Do-WinMax {
+    if ($script:Win.WindowState -eq [System.Windows.WindowState]::Maximized) { $script:Win.WindowState = [System.Windows.WindowState]::Normal }
+    else { $script:Win.WindowState = [System.Windows.WindowState]::Maximized }
+}
+
 function Set-AdvancedMode([bool]$on) {
     $vis = if ($on) { 'Visible' } else { 'Collapsed' }
     foreach ($n in @('NavSvc', 'NavStart', 'NavApps', 'NavClean', 'NavPriv', 'NavUpd')) { (Get-El $n).Visibility = $vis }
@@ -1694,7 +1741,7 @@ function Set-AdvancedMode([bool]$on) {
 # ============================================================
 #  Activity log
 # ============================================================
-$script:AppVersion = '2.2'
+$script:AppVersion = '2.3'
 $script:ActFile = Join-Path $script:DataDir 'activity.log'
 $script:LogBox = $null
 $script:SelfHash = $null
@@ -2830,7 +2877,7 @@ $mainXaml = @'
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="PC Optimizer" Width="1080" Height="740" MinWidth="880" MinHeight="480"
-        WindowStyle="SingleBorderWindow" ResizeMode="CanResize" Background="Transparent"
+        WindowStyle="None" ResizeMode="CanResize" Background="Transparent"
         WindowStartupLocation="CenterScreen" FontFamily="Segoe UI Variable Text, Segoe UI" FontSize="13"
         UseLayoutRounding="True" SnapsToDevicePixels="True">
   <Window.Resources>
@@ -2891,6 +2938,23 @@ $mainXaml = @'
       </Setter>
     </Style>
 
+    <Style x:Key="Dot" TargetType="Button">
+      <Setter Property="Width" Value="14"/>
+      <Setter Property="Height" Value="14"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Ellipse x:Name="E" Fill="{TemplateBinding Background}" Stroke="#33000000" StrokeThickness="0.5"/>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="E" Property="Opacity" Value="0.75"/></Trigger>
+              <Trigger Property="IsPressed" Value="True"><Setter TargetName="E" Property="Opacity" Value="0.55"/></Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
     <Style x:Key="Switch" TargetType="CheckBox">
       <Setter Property="Cursor" Value="Hand"/>
       <Setter Property="Template">
@@ -2929,7 +2993,13 @@ $mainXaml = @'
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
           </Grid.RowDefinitions>
-          <Grid Height="14"/>
+          <Grid x:Name="SideDrag" Background="Transparent" Height="56">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="18,0,0,0">
+              <Button x:Name="DotClose" Style="{StaticResource Dot}" Background="#FF5F57" ToolTip="Close" AutomationProperties.Name="Close" Margin="0,0,8,0"/>
+              <Button x:Name="DotMin" Style="{StaticResource Dot}" Background="#FEBC2E" ToolTip="Minimise" AutomationProperties.Name="Minimise" Margin="0,0,8,0"/>
+              <Button x:Name="DotMax" Style="{StaticResource Dot}" Background="#28C840" ToolTip="Maximise" AutomationProperties.Name="Maximise"/>
+            </StackPanel>
+          </Grid>
           <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"><StackPanel Margin="10,4,10,0">
             <TextBlock Text="OPTIMIZE" FontSize="11" FontWeight="SemiBold" Margin="10,4,0,6" Foreground="{DynamicResource SubTextBrush}"/>
             <Button x:Name="NavTune" Style="{StaticResource Nav}">
@@ -3047,10 +3117,16 @@ Say 'Building window...'
 try {
     $xaml = $mainXaml.Replace('<!--TABS-->', $tabXaml)
     $script:Win = [System.Windows.Markup.XamlReader]::Parse($xaml)
+    $script:Win.MaxHeight = [System.Windows.SystemParameters]::WorkArea.Height
+    $script:Win.MaxWidth = [System.Windows.SystemParameters]::WorkArea.Width
 
     $script:Win.Add_SourceInitialized({
         $script:Hwnd = (New-Object System.Windows.Interop.WindowInteropHelper($script:Win)).Handle
         try { Initialize-Glass } catch { $script:GlassOk = $false }
+        try {
+            $sc = [System.Windows.Interop.HwndSource]::FromHwnd($script:Hwnd).CompositionTarget.TransformToDevice.M11
+            [CaptionHook]::Install($script:Hwnd, [double]$sc)
+        } catch { Write-Log ('Caption hook: ' + $_) }
         Set-Theme $false
     })
 
@@ -3065,6 +3141,16 @@ try {
     })
 
     $script:Win.Add_Closed({ Stop-Sampler })
+
+    # Dragging (header areas)
+    foreach ($n in @('SideDrag', 'HdrTune', 'HdrDash', 'HdrSvc', 'HdrStart', 'HdrApps', 'HdrClean', 'HdrGame', 'HdrPriv', 'HdrUpd', 'HdrFix', 'HdrLog')) {
+        (Get-El $n).Add_MouseLeftButtonDown({ Do-WinDrag })
+    }
+
+    # Traffic lights
+    (Get-El 'DotClose').Add_Click({ Invoke-Safe 'Do-WinClose' })
+    (Get-El 'DotMin').Add_Click({ Invoke-Safe 'Do-WinMin' })
+    (Get-El 'DotMax').Add_Click({ Invoke-Safe 'Do-WinMax' })
 
     # Navigation
     (Get-El 'NavTune').Add_Click({ Select-Tab 'Tune' })
