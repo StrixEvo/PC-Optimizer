@@ -1834,7 +1834,7 @@ function Set-AdvancedMode([bool]$on) {
 # ============================================================
 #  Activity log
 # ============================================================
-$script:AppVersion = '2.8'
+$script:AppVersion = '2.9'
 $script:ActFile = Join-Path $script:DataDir 'activity.log'
 $script:LogBox = $null
 $script:SelfHash = $null
@@ -2061,7 +2061,8 @@ function Do-CheckUpdate {
     $script:UpdChecking = $true
     $script:UpdSilent = $Silent
     Set-Status 'Checking for updates...'
-    $url = "https://raw.githubusercontent.com/$($script:UpdateRepo)/$($script:UpdateBranch)/version.json"
+    # The API answers with the current file; raw.githubusercontent.com can serve an old copy for a while.
+    $url = "https://api.github.com/repos/$($script:UpdateRepo)/contents/version.json?ref=$($script:UpdateBranch)"
     Invoke-Background {
         param($u)
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -2071,6 +2072,7 @@ function Do-CheckUpdate {
                 $req = [Net.HttpWebRequest]::Create($u)
                 $req.Timeout = 15000
                 $req.UserAgent = 'PCOptimizer'
+                $req.Accept = 'application/vnd.github.raw'
                 $req.Headers.Add('Cache-Control', 'no-cache')
                 $resp = $req.GetResponse()
                 try { $rd = New-Object IO.StreamReader($resp.GetResponseStream()); return ('OK:' + $rd.ReadToEnd()) }
