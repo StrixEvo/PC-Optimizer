@@ -1,1 +1,1 @@
-Hover the green dot to pick where the window snaps: full, halves or quarters of the screen.
+Update check now starts the moment the app opens and reports the real reason if it fails.

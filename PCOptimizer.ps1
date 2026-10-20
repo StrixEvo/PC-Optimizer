@@ -1834,7 +1834,7 @@ function Set-AdvancedMode([bool]$on) {
 # ============================================================
 #  Activity log
 # ============================================================
-$script:AppVersion = '2.5'
+$script:AppVersion = '2.6'
 $script:ActFile = Join-Path $script:DataDir 'activity.log'
 $script:LogBox = $null
 $script:SelfHash = $null
@@ -2063,14 +2063,28 @@ function Do-CheckUpdate {
     $url = "https://raw.githubusercontent.com/$($script:UpdateRepo)/$($script:UpdateBranch)/version.json"
     Invoke-Background {
         param($u)
-        $ProgressPreference = 'SilentlyContinue'
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        try { (Invoke-WebRequest -Uri $u -UseBasicParsing -TimeoutSec 15).Content } catch { }
+        $err = ''
+        for ($i = 0; $i -lt 2; $i++) {
+            try {
+                $req = [Net.HttpWebRequest]::Create($u)
+                $req.Timeout = 15000
+                $req.UserAgent = 'PCOptimizer'
+                $req.Headers.Add('Cache-Control', 'no-cache')
+                $resp = $req.GetResponse()
+                try { $rd = New-Object IO.StreamReader($resp.GetResponseStream()); return ('OK:' + $rd.ReadToEnd()) }
+                finally { $resp.Close() }
+            } catch { $err = [string]$_.Exception.Message; Start-Sleep -Seconds 2 }
+        }
+        return ('ERR:' + $err)
     } {
         param($res)
         $script:UpdChecking = $false
         $content = $null
-        if ($res -and @($res).Count -gt 0) { $content = [string]@($res)[0] }
+        if ($res -and @($res).Count -gt 0) {
+            $txt = [string]@($res)[0]
+            if ($txt.StartsWith('OK:')) { $content = $txt.Substring(3) } else { Write-Log ('Update fetch: ' + $txt) }
+        }
         Invoke-WhenIdle { Show-UpdateResult $content $script:UpdSilent }
     } $url
 }
@@ -2852,16 +2866,6 @@ function Start-Boot {
         $script:LateTimer.Stop()
         try { $script:BootSecs = Get-BootSecs } catch { }
         Invoke-Safe 'Update-SysInfo'
-        if (Test-UpdateConfigured) {
-            $script:UpdCheckTimer = New-Object System.Windows.Threading.DispatcherTimer
-            $script:UpdCheckTimer.Interval = [TimeSpan]::FromSeconds(3)
-            $script:UpdCheckTimer.Add_Tick({
-                if ($script:Depth -gt 0) { return }       # something is running: try again on the next tick
-                $script:UpdCheckTimer.Stop()
-                Invoke-Safe 'Do-CheckUpdateQuiet'
-            })
-            $script:UpdCheckTimer.Start()
-        }
     })
     $script:LateTimer.Start()
 }
@@ -3227,6 +3231,8 @@ try {
     $script:Win.Add_Loaded({
         Select-Tab 'Tune'
         Restore-UiSettings
+        # check for an update straight away (on another thread); the answer waits until the app is idle
+        Invoke-Safe 'Do-CheckUpdateQuiet'
         # let the window paint first, then load in the background of the splash screen
         $script:BootTimer = New-Object System.Windows.Threading.DispatcherTimer
         $script:BootTimer.Interval = [TimeSpan]::FromMilliseconds(80)
