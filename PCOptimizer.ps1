@@ -1834,7 +1834,7 @@ function Set-AdvancedMode([bool]$on) {
 # ============================================================
 #  Activity log
 # ============================================================
-$script:AppVersion = '2.6'
+$script:AppVersion = '2.7'
 $script:ActFile = Join-Path $script:DataDir 'activity.log'
 $script:LogBox = $null
 $script:SelfHash = $null
@@ -2048,6 +2048,7 @@ function Do-UpdateExe([string]$self, $info) {
 
 $script:UpdChecking = $false
 $script:UpdSilent = $false
+$script:UpdContent = $null
 
 # The network request runs on another thread so the window never freezes while GitHub answers
 function Do-CheckUpdate {
@@ -2085,7 +2086,9 @@ function Do-CheckUpdate {
             $txt = [string]@($res)[0]
             if ($txt.StartsWith('OK:')) { $content = $txt.Substring(3) } else { Write-Log ('Update fetch: ' + $txt) }
         }
-        Invoke-WhenIdle { Show-UpdateResult $content $script:UpdSilent }
+        # the idle timer runs this later, when $content no longer exists, so hand the answer over via script scope
+        $script:UpdContent = $content
+        Invoke-WhenIdle { Show-UpdateResult $script:UpdContent $script:UpdSilent }
     } $url
 }
 

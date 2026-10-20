@@ -1,1 +1,1 @@
-Update check now starts the moment the app opens and reports the real reason if it fails.
+Fixes "could not check for updates": the update answer was being lost before it was shown.
