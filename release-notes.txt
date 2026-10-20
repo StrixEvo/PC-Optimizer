@@ -1,1 +1,1 @@
-Update check now reads GitHub directly, so it sees new versions straight away instead of a cached copy.
+Test release to check that updating works. No other changes.
