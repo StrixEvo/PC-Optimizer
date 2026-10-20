@@ -1,1 +1,1 @@
-Window now snaps to screen edges and corners like a normal Windows window (drag to an edge, or Win+arrow keys).
+Hover the green dot to pick where the window snaps: full, halves or quarters of the screen.

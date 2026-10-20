@@ -1735,6 +1735,92 @@ function Do-WinMax {
     else { $script:Win.WindowState = [System.Windows.WindowState]::Maximized }
 }
 
+# Hover menu on the green dot (like macOS tiling): pick where the window goes on the screen it is on.
+function Move-WinTo([double]$x, [double]$y, [double]$w, [double]$h) {
+    Add-Type -AssemblyName System.Windows.Forms
+    $sc = [System.Windows.Interop.HwndSource]::FromHwnd($script:Hwnd).CompositionTarget.TransformToDevice.M11
+    $wa = [System.Windows.Forms.Screen]::FromHandle($script:Hwnd).WorkingArea
+    $script:Win.WindowState = [System.Windows.WindowState]::Normal
+    $script:Win.Left = ($wa.X + $wa.Width * $x) / $sc
+    $script:Win.Top = ($wa.Y + $wa.Height * $y) / $sc
+    $script:Win.Width = $wa.Width * $w / $sc
+    $script:Win.Height = $wa.Height * $h / $sc
+}
+
+function Initialize-SnapMenu {
+    $dot = Get-El 'DotMax'
+    $pop = New-Object System.Windows.Controls.Primitives.Popup
+    $pop.PlacementTarget = $dot
+    $pop.Placement = [System.Windows.Controls.Primitives.PlacementMode]::Bottom
+    $pop.VerticalOffset = 6
+    $pop.StaysOpen = $true
+    $pop.AllowsTransparency = $true
+    $frame = New-Object System.Windows.Controls.Border
+    $frame.CornerRadius = New-Object System.Windows.CornerRadius(12)
+    $frame.Padding = New-Object System.Windows.Thickness(8)
+    $frame.Margin = New-Object System.Windows.Thickness(10)
+    $frame.BorderThickness = New-Object System.Windows.Thickness(1)
+    $frame.Effect = New-Object System.Windows.Media.Effects.DropShadowEffect -Property @{ BlurRadius = 14; ShadowDepth = 3; Opacity = 0.3 }
+    $grid = New-Object System.Windows.Controls.Primitives.UniformGrid
+    $grid.Columns = 3
+    $frame.Child = $grid
+    $pop.Child = $frame
+    $script:SnapPop = $pop
+    $script:SnapDot = $dot
+    $script:SnapFrame = $frame
+
+    # name, x, y, w, h (fractions of the screen work area)
+    $spots = @(
+        @('Fill screen', 0, 0, 1, 1), @('Left half', 0, 0, 0.5, 1), @('Right half', 0.5, 0, 0.5, 1),
+        @('Top half', 0, 0, 1, 0.5), @('Bottom half', 0, 0.5, 1, 0.5), @('Top left', 0, 0, 0.5, 0.5),
+        @('Top right', 0.5, 0, 0.5, 0.5), @('Bottom left', 0, 0.5, 0.5, 0.5), @('Bottom right', 0.5, 0.5, 0.5, 0.5)
+    )
+    $pill = $script:Win.FindResource('Pill')
+    foreach ($s in $spots) {
+        $cv = New-Object System.Windows.Controls.Canvas
+        $cv.Width = 48; $cv.Height = 30
+        $r = New-Object System.Windows.Shapes.Rectangle
+        $r.Width = 48 * $s[3] - 3; $r.Height = 30 * $s[4] - 3
+        $r.RadiusX = 3; $r.RadiusY = 3
+        $r.SetResourceReference([System.Windows.Shapes.Shape]::FillProperty, 'AccentBrush')
+        [System.Windows.Controls.Canvas]::SetLeft($r, 48 * $s[1] + 1.5)
+        [System.Windows.Controls.Canvas]::SetTop($r, 30 * $s[2] + 1.5)
+        [void]$cv.Children.Add($r)
+        $b = New-Object System.Windows.Controls.Button
+        $b.Style = $pill
+        $b.Padding = New-Object System.Windows.Thickness(3)
+        $b.Margin = New-Object System.Windows.Thickness(3)
+        $b.Content = $cv
+        $b.ToolTip = $s[0]
+        [System.Windows.Automation.AutomationProperties]::SetName($b, $s[0])
+        $b.Tag = $s
+        $b.Add_Click({
+            try { $t = $args[0].Tag; $script:SnapPop.IsOpen = $false; Move-WinTo $t[1] $t[2] $t[3] $t[4] }
+            catch { Write-Log ('Snap: ' + $_) }
+        })
+        [void]$grid.Children.Add($b)
+    }
+
+    $script:SnapGone = 0
+    $script:SnapTimer = New-Object System.Windows.Threading.DispatcherTimer
+    $script:SnapTimer.Interval = [TimeSpan]::FromMilliseconds(150)
+    $script:SnapTimer.Add_Tick({
+        $over = $script:SnapDot.IsMouseOver -or ($script:SnapPop.IsOpen -and $script:SnapFrame.IsMouseOver)
+        if ($over) {
+            $script:SnapGone = 0
+            if (-not $script:SnapPop.IsOpen) {
+                $script:SnapFrame.Background = New-Object System.Windows.Media.SolidColorBrush ([System.Windows.Media.ColorConverter]::ConvertFromString($(if ($script:Dark) { '#F02C2C2E' } else { '#F0F5F5F7' })))
+                $script:SnapFrame.BorderBrush = New-Object System.Windows.Media.SolidColorBrush ([System.Windows.Media.ColorConverter]::ConvertFromString('#22000000'))
+                $script:SnapPop.IsOpen = $true
+            }
+        } else {
+            $script:SnapGone++
+            if ($script:SnapGone -ge 2) { $script:SnapPop.IsOpen = $false; $script:SnapTimer.Stop() }
+        }
+    })
+    $dot.Add_MouseEnter({ $script:SnapGone = 0; $script:SnapTimer.Start() })
+}
+
 function Set-AdvancedMode([bool]$on) {
     $vis = if ($on) { 'Visible' } else { 'Collapsed' }
     foreach ($n in @('NavSvc', 'NavStart', 'NavApps', 'NavClean', 'NavPriv', 'NavUpd')) { (Get-El $n).Visibility = $vis }
@@ -1748,7 +1834,7 @@ function Set-AdvancedMode([bool]$on) {
 # ============================================================
 #  Activity log
 # ============================================================
-$script:AppVersion = '2.4'
+$script:AppVersion = '2.5'
 $script:ActFile = Join-Path $script:DataDir 'activity.log'
 $script:LogBox = $null
 $script:SelfHash = $null
@@ -3159,6 +3245,7 @@ try {
     (Get-El 'DotClose').Add_Click({ Invoke-Safe 'Do-WinClose' })
     (Get-El 'DotMin').Add_Click({ Invoke-Safe 'Do-WinMin' })
     (Get-El 'DotMax').Add_Click({ Invoke-Safe 'Do-WinMax' })
+    try { Initialize-SnapMenu } catch { Write-Log ('Snap menu: ' + $_) }
 
     # Navigation
     (Get-El 'NavTune').Add_Click({ Select-Tab 'Tune' })
