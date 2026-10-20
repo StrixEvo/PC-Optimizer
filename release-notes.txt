@@ -1,1 +1,1 @@
-Fixes "could not check for updates": the update answer was being lost before it was shown.
+Test release to check that updating works. No other changes.

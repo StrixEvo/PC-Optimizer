@@ -1834,7 +1834,7 @@ function Set-AdvancedMode([bool]$on) {
 # ============================================================
 #  Activity log
 # ============================================================
-$script:AppVersion = '2.7'
+$script:AppVersion = '2.8'
 $script:ActFile = Join-Path $script:DataDir 'activity.log'
 $script:LogBox = $null
 $script:SelfHash = $null
