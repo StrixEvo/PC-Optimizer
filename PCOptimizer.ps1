@@ -248,17 +248,220 @@ function Pump {
     try { $script:Win.Dispatcher.Invoke([Action]{}, [System.Windows.Threading.DispatcherPriority]::Background) } catch { }
 }
 
+# ---- Welsh (Cymraeg) interface ----
+# Draft translation: exact English text -> Welsh. Terms follow Welsh Government TermCymru where it has an entry.
+# Text that is not listed (service and tweak descriptions, messages with numbers in them) stays in English.
+# Non-ASCII letters are written as \uXXXX so this file stays plain ASCII.
+$script:Lang = 'en'
+$script:Cy = @{}
+$cyText = @'
+OPTIMIZE => OPTIMEIDDIO
+SYSTEM => SYSTEM
+Tune-Up => Tiwnio
+Dashboard => Dangosfwrdd
+Services => Gwasanaethau
+Startup => Cychwyn
+Apps => Apiau
+Cleaner => Glanh\u00e4wr
+Gaming => Gemau
+Privacy => Preifatrwydd
+Windows Update => Diweddariad Windows
+Repair => Atgyweirio
+Presets and Log => Rhagosodiadau a Chofnod
+Dark mode => Modd tywyll
+Advanced mode => Modd uwch
+Loading system info... => Llwytho gwybodaeth y system...
+Ready => Parod
+Ready. => Parod.
+Getting things ready... => Paratoi pethau...
+Reading system info... => Darllen gwybodaeth y system...
+Scanning your PC... => Sganio eich cyfrifiadur...
+Close => Cau
+Minimise => Lleihau
+Maximise => Mwyhau
+Fill screen => Llenwi'r sgrin
+Left half => Hanner chwith
+Right half => Hanner de
+Top half => Hanner uchaf
+Bottom half => Hanner isaf
+Top left => Chwith uchaf
+Top right => De uchaf
+Bottom left => Chwith isaf
+Bottom right => De isaf
+A quick, safe clean and speed-up. Review what it will do, then press Run. => Glanhau a chyflymu sydyn a diogel. Adolygwch beth fydd yn digwydd, yna pwyswch Rhedeg.
+Run tune-up => Rhedeg y tiwnio
+Scan again => Sganio eto
+Live view of your PC. Gauges turn amber above 60 percent and red above 85 percent. => Golwg fyw o'ch cyfrifiadur. Mae'r medryddion yn troi'n oren dros 60 y cant ac yn goch dros 85 y cant.
+Refresh hardware info => Adnewyddu gwybodaeth caledwedd
+Background Windows services most people never use. Manual is gentle, Strict fully disables. => Gwasanaethau Windows cefndir nad yw'r rhan fwyaf o bobl byth yn eu defnyddio. Mae \u00c2 llaw yn dyner, mae Llym yn eu hanalluogi'n llwyr.
+Apply => Gweithredu
+Restore originals => Adfer y gwreiddiol
+Restore point => Pwynt adfer
+Tick safe => Ticio'r rhai diogel
+Untick all => Dad-ticio popeth
+Strict (fully disable) => Llym (analluogi'n llwyr)
+Apps and scheduled tasks that launch at sign-in. Fully reversible: switch them back on any time. => Apiau a thasgau wedi'u hamserlennu sy'n cychwyn wrth fewngofnodi. Gellir eu gwrthdroi'n llwyr: trowch nhw ymlaen eto unrhyw bryd.
+Refresh => Adnewyddu
+Preinstalled Store apps you may never use. Removed apps can be reinstalled from the Microsoft Store. => Apiau Store wedi'u rhag-osod efallai na fyddwch byth yn eu defnyddio. Gellir ailosod apiau sydd wedi'u tynnu o'r Microsoft Store.
+Remove ticked => Tynnu'r rhai wedi'u ticio
+Tick bloat => Ticio'r diangen
+Temp files and caches. Scan first to see sizes, nothing is deleted until you press Clean. => Ffeiliau dros dro a storfeydd. Sganiwch yn gyntaf i weld y meintiau; ni chaiff dim ei ddileu nes i chi wasgu Glanhau.
+Clean => Glanhau
+Scan => Sganio
+One-click performance mode for playing. Restore normal puts everything back. => Modd perfformiad un clic ar gyfer chwarae. Mae Adfer arferol yn rhoi popeth yn \u00f4l.
+Gaming mode on => Modd gemau ymlaen
+Restore normal => Adfer arferol
+Refresh apps => Adnewyddu'r apiau
+Cut tracking, ads and nagging. Every switch is backed up first and can be undone. => Lleihau tracio, hysbysebion a swnian. Mae pob switsh yn cael ei ategu'n gyntaf a gellir ei ddadwneud.
+Undo all my changes => Dadwneud fy holl newidiadau
+Switch all on => Troi popeth ymlaen
+Take control of when updates happen. Security updates are never switched off. => Cymerwch reolaeth ar pryd mae diweddariadau'n digwydd. Ni chaiff diweddariadau diogelwch byth eu diffodd.
+Fix common Windows and network problems. Tools run in the background and show their output live. => Trwsio problemau cyffredin Windows a rhwydwaith. Mae'r offer yn rhedeg yn y cefndir ac yn dangos eu hallbwn yn fyw.
+Stop => Stopio
+Copy output => Cop\u00efo'r allbwn
+Share your setup with friends, and see exactly what this tool has changed. => Rhannwch eich gosodiadau gyda ffrindiau, a gweld yn union beth mae'r offeryn hwn wedi'i newid.
+Export preset => Allgludo rhagosodiad
+Import preset => Mewngludo rhagosodiad
+Copy log => Cop\u00efo'r cofnod
+Open data folder => Agor y ffolder data
+Check for updates => Chwilio am ddiweddariadau
+About this copy => Yngl\u0177n \u00e2'r copi hwn
+Activity log: everything this tool changed on this PC, newest first => Cofnod gweithgarwch: popeth a newidiodd yr offeryn hwn ar y cyfrifiadur hwn, y diweddaraf yn gyntaf
+Check and repair Windows => Gwirio ac atgyweirio Windows
+Close these running apps first (they are asked to close politely, unsaved work will prompt you) => Caewch yr apiau hyn sy'n rhedeg yn gyntaf (gofynnir iddynt gau'n gwrtais, bydd gwaith heb ei gadw yn eich annog)
+Here is what the tune-up will do. Untick anything you want to skip => Dyma beth fydd y tiwnio yn ei wneud. Dad-diciwch unrhyw beth rydych am ei hepgor
+How updates behave. ON means the setting is active => Sut mae diweddariadau'n ymddwyn. Mae YMLAEN yn golygu bod y gosodiad yn weithredol
+Live => Yn fyw
+Network => Rhwydwaith
+ON means the app launches when you sign in. Switch off what you do not need => Mae YMLAEN yn golygu bod yr ap yn cychwyn pan fyddwch yn mewngofnodi. Diffoddwch yr hyn nad oes ei angen arnoch
+ON means the protection is active. Every change is backed up and can be undone => Mae YMLAEN yn golygu bod yr amddiffyniad yn weithredol. Mae pob newid yn cael ei ategu a gellir ei ddadwneud
+Output => Allbwn
+Pause or resume updates => Oedi neu ailddechrau diweddariadau
+Press Scan to see how much space each item uses => Pwyswch Sganio i weld faint o le mae pob eitem yn ei ddefnyddio
+Safety net => Rhwyd ddiogelwch
+Storage => Storio
+Tick the apps you want to remove. Only apps that are safe to remove are listed => Ticiwch yr apiau rydych am eu tynnu. Dim ond apiau sy'n ddiogel i'w tynnu a restrir
+Tick the services you want to switch off => Ticiwch y gwasanaethau rydych am eu diffodd
+Tune-up complete => Tiwnio wedi'i gwblhau
+Tweaks => Addasiadau
+Loading... => Llwytho...
+Checking for updates... => Chwilio am ddiweddariadau...
+Could not check for updates. => Methu chwilio am ddiweddariadau.
+Downloading the update... => Lawrlwytho'r diweddariad...
+Update skipped. => Hepgorwyd y diweddariad.
+Dashboard ready. => Dangosfwrdd yn barod.
+Reading hardware info... => Darllen gwybodaeth caledwedd...
+Scanning your PC, one moment... => Sganio eich cyfrifiadur, eiliad...
+Scan complete. Review the list and press Run tune-up. => Sgan wedi'i gwblhau. Adolygwch y rhestr a phwyso Rhedeg y tiwnio.
+Ready. Press Scan. => Parod. Pwyswch Sganio.
+Log copied to the clipboard. => Cop\u00efwyd y cofnod i'r clipfwrdd.
+Output copied to the clipboard. => Cop\u00efwyd yr allbwn i'r clipfwrdd.
+Nothing is running. => Does dim yn rhedeg.
+Privacy settings loaded. => Llwythwyd y gosodiadau preifatrwydd.
+Repair tools ready. => Offer atgyweirio yn barod.
+Restore point not created. => Ni chr\u00ebwyd pwynt adfer.
+Updates resumed. => Ailddechreuwyd diweddariadau.
+Your original DNS settings are back. => Mae eich gosodiadau DNS gwreiddiol yn \u00f4l.
+Loading preset... => Llwytho rhagosodiad...
+Preset loaded. Nothing has been changed yet. => Llwythwyd y rhagosodiad. Does dim wedi'i newid eto.
+Restored your original power plan and Game Mode settings. => Adferwyd eich cynllun p\u0175er gwreiddiol a'ch gosodiadau Modd G\u00eam.
+Ready. Pick your tweaks and press Gaming mode on. => Parod. Dewiswch eich addasiadau a phwyso Modd gemau ymlaen.
+Could not copy: another app is holding the clipboard. Try again. => Methu cop\u00efo: mae ap arall yn dal y clipfwrdd. Ceisiwch eto.
+Loading installed apps... this can take a few seconds => Llwytho apiau wedi'u gosod... gall hyn gymryd ychydig eiliadau
+An update was ignored because it is not signed by the author. => Anwybyddwyd diweddariad oherwydd nad yw wedi'i lofnodi gan yr awdur.
+Nothing is ticked. => Does dim wedi'i ticio.
+No active network connection was found. => Ni chanfuwyd cysylltiad rhwydwaith gweithredol.
+No backup found, nothing to restore. => Ni chanfuwyd copi wrth gefn, does dim i'w adfer.
+That file is not a PC Optimizer preset. => Nid rhagosodiad PC Optimizer yw'r ffeil honno.
+This update is not signed by the author, so it was not installed. => Nid yw'r diweddariad hwn wedi'i lofnodi gan yr awdur, felly ni chafodd ei osod.
+Updates are not set up in this copy yet. => Nid yw diweddariadau wedi'u sefydlu yn y copi hwn eto.
+Could not check for updates. Check your internet connection and try again. => Methu chwilio am ddiweddariadau. Gwiriwch eich cysylltiad rhyngrwyd a cheisiwch eto.
+Restart the PC in 15 seconds? Save your work first. => Ailgychwyn y cyfrifiadur ymhen 15 eiliad? Cadwch eich gwaith yn gyntaf.
+Put every setting in this tab back to how it was before this tool changed it? => Rhoi pob gosodiad yn y tab hwn yn \u00f4l fel yr oedd cyn i'r offeryn hwn ei newid?
+'@
+foreach ($line in ($cyText -split "`n")) {
+    $i = $line.IndexOf(' => ')
+    if ($i -gt 0) {
+        $enKey = $line.Substring(0, $i).Trim()
+        $cyVal = [regex]::Replace($line.Substring($i + 4).Trim(), '\\u([0-9a-fA-F]{4})', { param($m) [string][char][Convert]::ToInt32($m.Groups[1].Value, 16) })
+        $script:Cy[$enKey] = $cyVal
+    }
+}
+# Remembers the English text of everything that has been translated: [english, shown]
+$script:TrOrig = New-Object 'System.Collections.Generic.Dictionary[System.String,System.String[]]'
+$script:TrIds = New-Object 'System.Runtime.CompilerServices.ConditionalWeakTable[System.Object,System.String]'
+$script:TrNext = 0
+
+function T([string]$s) {
+    if ($script:Lang -eq 'cy' -and $s -and $script:Cy.ContainsKey($s)) { return $script:Cy[$s] }
+    return $s
+}
+
+function Get-TrId($node, [string]$kind) {
+    $id = $null
+    if (-not $script:TrIds.TryGetValue($node, [ref]$id)) {
+        $script:TrNext++
+        $id = [string]$script:TrNext
+        $script:TrIds.Add($node, $id)
+    }
+    return ($id + ':' + $kind)
+}
+
+# Returns the text to show for $cur and keeps the English original. If something else changed the text since
+# we last translated it (a status line, for example), the new text counts as the new English original.
+function Resolve-Tr([string]$key, [string]$cur) {
+    $rec = $null
+    if ($script:TrOrig.TryGetValue($key, [ref]$rec) -and $rec[1] -eq $cur) { $en = $rec[0] } else { $en = $cur }
+    $to = T $en
+    if ($to -ne $en) { $script:TrOrig[$key] = @($en, $to) } else { [void]$script:TrOrig.Remove($key) }
+    return $to
+}
+
+function Update-LanguageNode($node) {
+    if ($node -isnot [System.Windows.DependencyObject]) { return }
+    if ($node -is [System.Windows.Controls.TextBlock]) {
+        $cur = [string]$node.Text
+        if ($cur) { $to = Resolve-Tr (Get-TrId $node 'text') $cur; if ($to -ne $cur) { $node.Text = $to } }
+    } elseif ($node -is [System.Windows.Controls.ContentControl] -and $node.Content -is [string]) {
+        $cur = [string]$node.Content
+        if ($cur) { $to = Resolve-Tr (Get-TrId $node 'content') $cur; if ($to -ne $cur) { $node.Content = $to } }
+    }
+    if ($node -is [System.Windows.FrameworkElement]) {
+        $tip = $node.ToolTip
+        if ($tip -is [string] -and $tip) { $to = Resolve-Tr (Get-TrId $node 'tip') $tip; if ($to -ne $tip) { $node.ToolTip = $to } }
+        $nm = [System.Windows.Automation.AutomationProperties]::GetName($node)
+        if ($nm) { $to = Resolve-Tr (Get-TrId $node 'auto') $nm; if ($to -ne $nm) { [System.Windows.Automation.AutomationProperties]::SetName($node, $to) } }
+    }
+    foreach ($c in [System.Windows.LogicalTreeHelper]::GetChildren($node)) { Update-LanguageNode $c }
+}
+
+function Update-Language {
+    if ($script:Lang -eq 'en' -and $script:TrOrig.Count -eq 0) { return }
+    try {
+        Update-LanguageNode $script:Win
+        if ($script:SnapFrame) { Update-LanguageNode $script:SnapFrame }
+    } catch { Write-Log ('Language: ' + $_) }
+}
+
+function Set-Language([string]$code) {
+    $script:Lang = $code
+    $btn = Get-El 'LangBtn'
+    if ($btn) { $btn.Content = $(if ($code -eq 'cy') { 'English' } else { 'Cymraeg' }) }
+    Update-Language
+    Save-UiSettings
+}
+
 function Set-Status([string]$text) {
-    (Get-El 'StatusText').Text = $text
+    (Get-El 'StatusText').Text = (T $text)
     Pump
 }
 
 function Show-Msg([string]$text) {
-    [void][System.Windows.MessageBox]::Show($text, 'PC Optimizer', 'OK', 'Information')
+    [void][System.Windows.MessageBox]::Show((T $text), 'PC Optimizer', 'OK', 'Information')
 }
 
 function Confirm-Msg([string]$text) {
-    $r = [System.Windows.MessageBox]::Show($text, 'PC Optimizer', 'YesNo', 'Question')
+    $r = [System.Windows.MessageBox]::Show((T $text), 'PC Optimizer', 'YesNo', 'Question')
     return ($r -eq 'Yes')
 }
 
@@ -296,7 +499,7 @@ function Invoke-Safe([string]$fn) {
     try { & $fn } catch {
         Write-Log ($fn + ': ' + ($_ | Out-String))
         [void][System.Windows.MessageBox]::Show(("Something went wrong:`n`n" + ($_ | Out-String)), 'PC Optimizer', 'OK', 'Error')
-    } finally { Exit-Busy }
+    } finally { Exit-Busy; Update-Language }
 }
 
 # Run slow work (network, big scans) on another thread. $work must be self-contained: it runs in its own runspace
@@ -1704,7 +1907,7 @@ $script:RestoringUi = $false
 function Save-UiSettings {
     if ($script:RestoringUi) { return }
     try {
-        $o = [ordered]@{ Dark = [bool](Get-El 'ThemeSwitch').IsChecked; Advanced = [bool](Get-El 'AdvSwitch').IsChecked }
+        $o = [ordered]@{ Dark = [bool](Get-El 'ThemeSwitch').IsChecked; Advanced = [bool](Get-El 'AdvSwitch').IsChecked; Lang = $script:Lang }
         $o | ConvertTo-Json | Set-Content -LiteralPath $script:UiFile -Encoding UTF8
     } catch { Write-Log ('Save UI settings: ' + $_) }
 }
@@ -1723,6 +1926,11 @@ function Restore-UiSettings {
         }
         (Get-El 'ThemeSwitch').IsChecked = $dark
         (Get-El 'AdvSwitch').IsChecked = $adv
+        # language: the saved choice, otherwise Welsh when Windows itself is set to Welsh
+        $lang = 'en'
+        if ($saved -and $saved.Lang) { $lang = [string]$saved.Lang }
+        elseif ([System.Globalization.CultureInfo]::CurrentUICulture.Name -like 'cy*') { $lang = 'cy' }
+        Set-Language $(if ($lang -eq 'cy') { 'cy' } else { 'en' })
     } catch { Write-Log ('Restore UI settings: ' + $_) }
     finally { $script:RestoringUi = $false }
 }
@@ -1834,7 +2042,7 @@ function Set-AdvancedMode([bool]$on) {
 # ============================================================
 #  Activity log
 # ============================================================
-$script:AppVersion = '1.10'
+$script:AppVersion = '1.11'
 $script:ActFile = Join-Path $script:DataDir 'activity.log'
 $script:LogBox = $null
 $script:SelfHash = $null
@@ -2848,7 +3056,7 @@ function Test-ElevatedAccount {
 }
 
 function Set-Splash([string]$t) {
-    try { (Get-El 'SplashText').Text = $t } catch { }
+    try { (Get-El 'SplashText').Text = (T $t) } catch { }
     Pump
 }
 
@@ -2915,6 +3123,7 @@ function Select-Tab([string]$id) {
     if ($id -eq 'Upd' -and -not $script:UpdLoaded) { Invoke-Safe 'Load-Upd' }
     if ($id -eq 'Fix' -and -not $script:FixLoaded) { $script:FixLoaded = $true; Invoke-Safe 'Load-Fix' }
     if ($id -eq 'Log') { Invoke-Safe 'Load-Log' }
+    Update-Language
 }
 
 # ============================================================
@@ -3184,6 +3393,7 @@ $mainXaml = @'
               <TextBlock Text="Advanced mode" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="{DynamicResource SubTextBrush}"/>
               <CheckBox x:Name="AdvSwitch" AutomationProperties.Name="Advanced mode" Style="{StaticResource Switch}" VerticalAlignment="Center"/>
             </StackPanel>
+            <Button x:Name="LangBtn" Style="{StaticResource Pill}" Content="Cymraeg" Padding="12,5" FontSize="12" HorizontalAlignment="Left" Margin="6,12,0,0"/>
           </StackPanel>
         </Grid>
       </Border>
@@ -3293,6 +3503,7 @@ try {
     # Tune-Up and mode
     (Get-El 'BtnTuneRun').Add_Click({ Invoke-Safe 'Do-TuneUp' })
     (Get-El 'BtnTuneScan').Add_Click({ Invoke-Safe 'Load-Tune' })
+    (Get-El 'LangBtn').Add_Click({ Set-Language $(if ($script:Lang -eq 'cy') { 'en' } else { 'cy' }) })
     (Get-El 'AdvSwitch').Add_Checked({ Set-AdvancedMode $true; Save-UiSettings })
     (Get-El 'AdvSwitch').Add_Unchecked({ Set-AdvancedMode $false; Save-UiSettings })
 

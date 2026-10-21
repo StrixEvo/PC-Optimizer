@@ -16,6 +16,11 @@ Simple mode (default): Tune-Up, Dashboard, Gaming, Repair, Presets and Log.
 Advanced mode (switch bottom-left): Services, Startup, Apps, Cleaner, Privacy, Windows Update.
   Dark mode and Advanced mode are remembered.
 
+LANGUAGE
+--------
+Press the language button at the bottom-left (Cymraeg / English) to switch between English and Welsh.
+The Welsh is a draft and not everything is translated yet.
+
 SAFETY
 ------
 - A restore point is created before bigger changes if System Protection is already on for C:

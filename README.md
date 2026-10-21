@@ -15,6 +15,12 @@ Check your download against the SHA256 printed on the release page:
 
 The same value is shown in the app on the **Presets and Log** tab.
 
+## Language
+The app is in English and Welsh (Cymraeg). Use the button at the bottom of the sidebar to switch; the choice is
+remembered, and a Windows set to Welsh starts the app in Welsh. The Welsh is a draft: menus, buttons, headings and the
+main messages are translated, using Welsh Government TermCymru terms where it has an entry. Descriptions of individual
+services and tweaks, and messages with numbers in them, are still English. Corrections from Welsh speakers are welcome.
+
 ## Updates
 The app checks this repository a few seconds after it starts and offers an update. It installs
 nothing unless you press Yes, and it only accepts an update whose `version.json` carries a signature

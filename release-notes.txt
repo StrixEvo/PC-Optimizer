@@ -1,1 +1,1 @@
-Signed updates, instant update check, macOS-style window with snapping and a hover snap menu on the green dot.
+Welsh (Cymraeg) option: switch language with the button at the bottom of the sidebar. Draft translation of menus, buttons and main messages.
