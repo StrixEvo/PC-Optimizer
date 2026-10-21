@@ -1,1 +1,1 @@
-Welsh (Cymraeg) option: switch language with the button at the bottom of the sidebar. Draft translation of menus, buttons and main messages.
+New app icon.
